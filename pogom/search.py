@@ -244,11 +244,11 @@ def status_printer(threadStatus, search_items_queue_array, db_updates_queue,
 
         elif display_type[0] == 'hashstatus':
             status_text.append(
-                '----------------------------------------------------------' + 
+                '----------------------------------------------------------' +
                 '---------------------')
             status_text.append('Hash key status:')
             status_text.append(
-                '----------------------------------------------------------' + 
+                '----------------------------------------------------------' +
                 '---------------------')
 
             status = '{:21} | {:9} | {:9} | {:9} | {:20}'
@@ -1144,6 +1144,7 @@ def search_worker_thread(args, account_queue, account_sets, account_failures,
                     log.debug('Hash key %s has %s/%s RPM left.', key,
                               key_instance['remaining'],
                               key_instance['maximum'])
+
 
                 # Delay the desired amount after "scan" completion.
                 delay = scheduler.delay(status['last_scan_date'])
