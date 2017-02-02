@@ -1117,7 +1117,7 @@ def search_worker_thread(args, account_queue, account_failures,
                             del gym_responses
 
                 if args.hash_key:
-                    key_instance = key_scheduler.keys[key_scheduler.current()]
+                    key_instance = key_scheduler.keys[key]
                     key_instance['remaining'] = HashServer.status.get(
                         'remaining', 0)
 
