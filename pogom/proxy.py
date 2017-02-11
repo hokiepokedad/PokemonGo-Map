@@ -44,7 +44,7 @@ def check_proxy(proxy_queue, timeout, proxies, show_warnings, check_results):
             proxy_response = requests.post(proxy_test_url, '',
                                            proxies={'http': proxy[1],
                                                     'https': proxy[1]},
-                                           timeout=timeout)
+                                           timeout=timeout, verify=False)
 
             if proxy_response.status_code == 200:
                 log.debug('Proxy %s is ok.', proxy[1])
