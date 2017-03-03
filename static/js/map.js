@@ -64,7 +64,7 @@ var lastUpdateTime
 
 var gymTypes = ['Uncontested', 'Mystic', 'Valor', 'Instinct']
 var gymPrestige = [2000, 4000, 8000, 12000, 16000, 20000, 30000, 40000, 50000]
-var audio = new Audio('static/sounds/ding.mp3')
+createjs.Sound.registerSound('static/sounds/ding.mp3', 'ding')
 
 var genderType = ['♂', '♀', '⚲']
 var unownForm = ['unset', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '!', '?']
@@ -775,15 +775,14 @@ function playPokemonSound(pokemonID) {
         return
     }
     if (!Store.get('playCries')) {
-        audio.play()
+		createjs.Sound.play('ding')
     } else {
-        var audioCry = new Audio('static/sounds/cries/' + pokemonID + '.wav')
-        audioCry.play().catch(function (err) {
-            if (err) {
-                console.log('Sound for Pokémon ' + pokemonID + ' is missing, using generic sound instead.')
-                audio.play()
-            }
-        })
+		if (createjs.Sound.registerSound('static/sounds/cries/' + pokemonID + '.wav', pokemonID)) {
+			createjs.Sound.play(pokemonID)
+		} else {
+			console.log('Sound for Pokémon ' + pokemonID + ' is missing, using generic sound instead.')
+			createjs.Sound.play('ding')
+		}
     }
 }
 
@@ -1596,22 +1595,18 @@ function sendNotification(title, text, icon, lat, lng) {
         return false // Notifications are not present in browser
     }
 
-    if (Notification.permission !== 'granted') {
-        Notification.requestPermission()
-    } else {
-        var notification = new Notification(title, {
+    if (Push.isSupported) {
+        Push.create(title, {
             icon: icon,
             body: text,
-            sound: 'sounds/ding.mp3'
-        })
-
-        notification.onclick = function () {
+            vibrate: 1000,
+            onClick: function () {
             window.focus()
-            notification.close()
-
-            centerMap(lat, lng, 20)
+            this.close()
+                    centerMap(lat, lng, 20)
+                  }
+              })
         }
-    }
 }
 
 function createMyLocationButton() {
@@ -1982,14 +1977,13 @@ function toggleGymPokemonDetails(e) { // eslint-disable-line no-unused-vars
 //
 
 $(function () {
-    if (!Notification) {
+    if (!Push.isSupported) {
         console.log('could not load notifications')
         return
     }
 
-    if (Notification.permission !== 'granted') {
-        Notification.requestPermission()
-    }
+    Push.Permission.request()
+
 })
 
 $(function () {
