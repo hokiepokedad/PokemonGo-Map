@@ -5,7 +5,7 @@ import calendar
 import logging
 
 from flask import Flask, abort, jsonify, render_template, request,\
-    make_response
+    make_response, send_from_directory
 from flask.json import JSONEncoder
 from flask_compress import Compress
 from datetime import datetime
@@ -58,6 +58,7 @@ class Pogom(Flask):
         self.route("/stats", methods=['GET'])(self.get_stats)
         self.route("/status", methods=['GET'])(self.get_status)
         self.route("/status", methods=['POST'])(self.post_status)
+        self.route("/sw.js", methods=['GET'])(self.static_from_root)  # Required for mobile notifications
         self.route("/gym_data", methods=['GET'])(self.get_gymdata)
         self.route("/bookmarklet", methods=['GET'])(self.get_bookmarklet)
         self.route("/inject.js", methods=['GET'])(self.render_inject_js)
@@ -570,6 +571,9 @@ class Pogom(Flask):
         else:
             d['login'] = 'failed'
         return jsonify(d)
+
+    def static_from_root(self):
+        return send_from_directory(self.static_folder + '/js', request.path[1:])
 
 
 class CustomJSONEncoder(JSONEncoder):
