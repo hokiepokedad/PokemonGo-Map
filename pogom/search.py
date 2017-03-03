@@ -266,7 +266,7 @@ def status_printer(threadStatus, search_items_queue_array, db_updates_queue,
                         key_text,
                         key_instance['remaining'],
                         key_instance['maximum'],
-                        key_instance['peak']))
+                        key_instance['peak'],
                         key_instance['expires']))
 
         # Print the status_text for the current screen.
