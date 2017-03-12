@@ -1183,7 +1183,7 @@ function loadRawData() {
     var neLng = nePoint.lng()
 
     return $.ajax({
-        url: 'raw_data',
+        url: 'pgandata',
         type: 'GET',
         data: {
             'timestamp': timestamp,
