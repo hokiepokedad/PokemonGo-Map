@@ -48,7 +48,7 @@ class Pogom(Flask):
         # Routes
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
-        self.route("/raw_data", methods=['GET'])(self.raw_data)
+        self.route("/pgandata", methods=['GET'])(self.raw_data)
         self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
         self.route("/mobile", methods=['GET'])(self.list_pokemon)
