@@ -32,9 +32,75 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.css">
     <script src="{{ url_for('static', filename='js/vendor/modernizr.custom.js').lstrip('/') }}"></script>
+<<<<<<< HEAD
     <!-- Toastr -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+=======
+	
+	<style>
+	
+	#window {
+		color: black !important;
+		display: block;
+		position: absolute;
+		background: rgba(255,255,255,0.93);
+		  border: 1px solid #a0a0a0;
+		border-radius: 10px;
+		width: 325px;
+		height: 325px;
+		top: 50%;
+		margin-top: -120px;
+		left: 50%;
+		margin-left: -150px;
+		z-index: 2000;
+		padding: 10px;
+		text-align: center;
+		overflow: auto;
+    }
+	</style>
+>>>>>>> Donation splash and high-res sprites
   </head>
+  
+  <div id="window">
+<button class="close" onclick="getElementById('window').style.visibility= 'hidden';" style="
+	position: absolute;
+	margin-top: -5px;
+	margin-left: 105px;
+	padding: 2.2px;
+	color: #585858 !important;
+	background-color: rgba(60, 60, 60, 0);
+">
+	   <i class="fa fa-times-circle fa-2x" style="
+	color: red;
+"></i>
+</button>
+		<p style="
+	/* color: #212121; */
+	font-size: 14px;
+	margin: 0px !important;
+	font-weight: 400;
+"></p><p><b>Welcome to the<br>PoGo Alerts Network!</b></p><p>
+		</p><p style="
+	font-size: 15px;
+margin-top: -30px;
+"><b><font color = 'red'>Your donations keep this site alive. If you like our service, please consider helping us pay our bills.</font></b>
+<br><br>
+        </p><hr style="
+    margin-top: -20px;
+    margin-bottom: 5px;
+">
+<br>
+
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="GBLRCCHDMX4AA">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+</form>
+
+
+</div>
+  
   <body id="top">
     <div class="wrapper">
       <!-- Header -->
