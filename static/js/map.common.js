@@ -789,13 +789,13 @@ var pGoStyleNight = [{
 }]
 
 var pokemonSprites = {
-    columns: 28,
-    iconWidth: 80,
-    iconHeight: 80,
-    spriteWidth: 2240,
-    spriteHeight: 1440,
+	columns: 251,
+    iconWidth: 94.028,
+    iconHeight: 96,
+    spriteWidth: 23610,
+    spriteHeight: 96,
     filename: 'static/icons-large-sprite.png',
-    name: 'High-Res'
+    name: 'Monocle HQ'
 }
 
 //
@@ -851,7 +851,7 @@ var StoreOptions = {
         type: StoreTypes.String
     },
     'remember_select_exclude': {
-        default: [10,11,13,14,16,17,19,20,21,22,23,29,30,32,33,41,42,43,46,48,49,52,54,55,56,60,61,69,72,73,74,79,96,98,99,100,109,116,118,120,129,133],
+        default: [10,11,13,14,16,17,19,20,21,22,23,29,30,32,33,41,42,43,46,48,49,52,54,55,56,60,61,69,72,73,74,79,96,98,99,100,109,116,118,120,129,133,161,167,177,198],
         type: StoreTypes.JSON
     },
     'remember_select_notify': {
