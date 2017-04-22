@@ -436,6 +436,9 @@ function pokemonLabel(item) {
                 IV: ${iv.toFixed(1)}% (${atk}/${def}/${sta})
             </div>
             <div>
+                CP: ${cp}
+            </div>
+            <div>
                 Moves: ${pMove1} / ${pMove2}
             </div>
             `
