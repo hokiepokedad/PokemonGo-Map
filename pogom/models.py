@@ -33,7 +33,9 @@ from .utils import get_pokemon_name, get_pokemon_rarity, get_pokemon_types, \
     clear_dict_response
 from .transform import transform_from_wgs_to_gcj, get_new_coords
 from .customLog import printPokemon
-from .account import tutorial_pokestop_spin, get_player_level
+from .account import (tutorial_pokestop_spin, get_player_level, check_login,
+                      setup_api)
+
 log = logging.getLogger(__name__)
 
 args = get_args()
@@ -1764,7 +1766,7 @@ def hex_bounds(center, steps=None, radius=None):
 
 # todo: this probably shouldn't _really_ be in "models" anymore, but w/e.
 def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
-              api, now_date, account):
+              key_scheduler, api, status, now_date, account, account_sets):
     pokemon = {}
     pokestops = {}
     gyms = {}
@@ -1931,34 +1933,79 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
             printPokemon(p['pokemon_data']['pokemon_id'], p[
                          'latitude'], p['longitude'], disappear_time)
 
-            # Scan for IVs and moves.
+            # Scan for IVs/CP and moves.
+            pokemon_id = p['pokemon_data']['pokemon_id']
             encounter_result = None
-            if (args.encounter and (p['pokemon_data']['pokemon_id']
-                                    in args.encounter_whitelist or
-                                    p['pokemon_data']['pokemon_id']
-                                    not in args.encounter_blacklist and
-                                    not args.encounter_whitelist)):
-                time.sleep(args.encounter_delay)
-                # Setup encounter request envelope.
-                req = api.create_request()
-                encounter_result = req.encounter(
-                    encounter_id=p['encounter_id'],
-                    spawn_point_id=p['spawn_point_id'],
-                    player_latitude=step_location[0],
-                    player_longitude=step_location[1])
-                req.check_challenge()
-                req.get_hatched_eggs()
-                req.get_inventory()
-                req.check_awarded_badges()
-                req.download_settings()
-                req.get_buddy_walked()
-                encounter_result = req.call()
-                encounter_result = clear_dict_response(encounter_result)
 
-                captcha_url = encounter_result['responses']['CHECK_CHALLENGE'][
-                    'challenge_url']  # Check for captcha
-                if len(captcha_url) > 1:  # Throw warning but finish parsing
-                    log.debug('Account encountered a reCaptcha.')
+            if args.encounter and (pokemon_id in args.iv_whitelist or
+                                   pokemon_id in args.cp_whitelist):
+                time.sleep(args.encounter_delay)
+
+                # Get account to use for IV or CP scanning.
+                if pokemon_id in args.cp_whitelist:
+                    hlvl_account = account_sets.next('30')
+                elif pokemon_id in args.iv_whitelist:
+                    hlvl_account = account_sets.next('25')
+
+                    # If no 25s are available, fall back to a L30.
+                    if not hlvl_account:
+                        hlvl_account = account_sets.next('25')
+
+                # If we didn't get an account, it means we can't encounter.
+                if hlvl_account:
+                    # Make new API for this account.
+                    # TODO: Optionally store the api object in the account
+                    # itself so it can be re-used later on. However, this
+                    # can take up a considerable amount of memory depending
+                    # on the number of accounts.
+                    hlvl_api = setup_api(args, status)
+
+                    # Set location.
+                    hlvl_api.set_position(*step_location)
+
+                    # Hashing key.
+                    # TODO: all of this should be handled properly... all
+                    # these useless, inefficient threads passing around all
+                    # these single-use variables are making me ill.
+                    if args.hash_key:
+                        key = key_scheduler.next()
+                        log.debug(
+                            'Using key {} for this encounter.'.format(key))
+                        hlvl_api.activate_hash_server(key)
+
+                    # Log in.
+                    check_login(args, hlvl_account, hlvl_api, step_location,
+                                status['proxy_url'])
+
+                    # Setup encounter request envelope.
+                    req = hlvl_api.create_request()
+                    encounter_result = req.encounter(
+                        encounter_id=p['encounter_id'],
+                        spawn_point_id=p['spawn_point_id'],
+                        player_latitude=step_location[0],
+                        player_longitude=step_location[1])
+                    req.check_challenge()
+                    req.get_hatched_eggs()
+                    req.get_inventory()
+                    req.check_awarded_badges()
+                    req.download_settings()
+                    req.get_buddy_walked()
+                    encounter_result = req.call()
+                    encounter_result = clear_dict_response(encounter_result)
+
+                    responses = encounter_result['responses']
+                    # Check for captcha
+                    captcha_url = responses['CHECK_CHALLENGE']['challenge_url']
+                    # Throw warning but finish parsing
+                    if len(captcha_url) > 1:
+                        # Flag account.
+                        hlvl_account['captcha'] = True
+                        log.info('High level account '
+                                 + hlvl_account['username']
+                                 + ' encountered a captcha.')
+                else:
+                    log.error('No L25 or L30 accounts are available, please'
+                              + ' consider adding more. Skipping encounter.')
 
             pokemon[p['encounter_id']] = {
                 'encounter_id': b64encode(str(p['encounter_id'])),
@@ -1992,7 +2039,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                         'individual_stamina', 0),
                     'move_1': pokemon_info['move_1'],
                     'move_2': pokemon_info['move_2'],
-                    'cp': pokemon_info['cp'],
+                    'cp': pokemon_info.get('cp', 0),
                     'height': pokemon_info['height_m'],
                     'weight': pokemon_info['weight_kg'],
                     'gender': pokemon_info['pokemon_display']['gender']
