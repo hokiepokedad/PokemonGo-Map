@@ -40,5 +40,6 @@ Some important notes:
  * The old encounter whitelists/blacklists have been removed entirely.
  * Both the IV and CP whitelists are optional.
  * When no L25 accounts are available but IV encounters are enabled, it will try to get a L30 account instead for the encounter.
- * Captcha'd L25/L30 accounts will be logged and disabled in the scheduler. Having `-v` enabled will show you an entry in the logs mentioning "High level account x encountered a captcha". They will not be solved automatically.
+ * Captcha'd L25/L30 accounts will be logged in console and disabled in the scheduler. Having `-v` enabled will show you an entry in the logs mentioning "High level account x encountered a captcha". They will not be solved automatically.
  * The encounter is a single request (1 RPM). We intentionally don't use the account for anything else besides the encounter.
+ * The high level account properly uses a proxy if one is set for the scan, and properly rotates hashing keys when needed.
