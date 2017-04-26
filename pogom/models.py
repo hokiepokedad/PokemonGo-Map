@@ -1945,13 +1945,13 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
 
                 # Get account to use for IV or CP scanning.
                 if pokemon_id in args.cp_whitelist:
-                    hlvl_account = account_sets.next('30')
+                    hlvl_account = account_sets.next('30', step_location)
                 elif pokemon_id in args.iv_whitelist:
-                    hlvl_account = account_sets.next('25')
+                    hlvl_account = account_sets.next('25', step_location)
 
                     # If no 25s are available, fall back to a L30.
                     if not hlvl_account:
-                        hlvl_account = account_sets.next('25')
+                        hlvl_account = account_sets.next('25', step_location)
 
                 # If we didn't get an account, it means we can't encounter.
                 if hlvl_account:
