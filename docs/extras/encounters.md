@@ -4,7 +4,8 @@ Since the IV update of April 21st which makes IVs the same for players of level 
 
 Steps for using the new encounter system:
 
-1. Add L25 (and optionally L30) accounts for IV scanning into a CSV file (separate from your regular accounts file, e.g. 'high-level.csv'). The lines should be formatted as "25 or 30,service,user,pass":
+1. Enabled encounters on your map (`-enc`).
+2. Add L25 (and optionally L30) accounts for IV scanning into a CSV file (separate from your regular accounts file, e.g. 'high-level.csv'). The lines should be formatted as "25 or 30,service,user,pass":
    ```
    25,ptc,randOMusername1,P4ssw0rd!
    25,ptc,randOMusername2,P4ssw0rd!
@@ -14,7 +15,7 @@ Steps for using the new encounter system:
    ```
    --high-lvl-accounts high-level.csv
    ```
-2. Create files for your IV and CP encounter whitelists and add the Pokémon IDs which you want to encounter, one per line.
+3. Create files for your IV and CP encounter whitelists and add the Pokémon IDs which you want to encounter, one per line.
    iv-whitelist.txt:
    ```
    10
@@ -28,11 +29,11 @@ Steps for using the new encounter system:
    66
    89
    ```
-3. Enable the whitelist files in your config or cli parameters (check commandline.md for usage):
+4. Enable the whitelist files in your config or cli parameters (check commandline.md for usage):
    ```
    --iv-whitelist-file iv-whitelist.txt --cp-whitelist-file cp-whitelist.txt
    ```
-4. Optionally set a speed limit for your high level accounts. This is separate from the usual speed limit, to allow a lower speed to keep high level accounts safer:
+5. Optionally set a speed limit for your high level accounts. This is separate from the usual speed limit, to allow a lower speed to keep high level accounts safer:
    ```
    --hlvl-kph 25
    ```
