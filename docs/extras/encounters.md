@@ -4,11 +4,15 @@ Since the IV update of April 21st which makes IVs the same for players of level 
 
 Steps for using the new encounter system:
 
-1. Add L25 (and optionally L30) accounts for IV scanning into a CSV file (e.g. 'high-level.csv'). The lines should be formatted as "25 or 30,service,user,pass":
+1. Add L25 (and optionally L30) accounts for IV scanning into a CSV file (separate from your regular accounts file, e.g. 'high-level.csv'). The lines should be formatted as "25 or 30,service,user,pass":
    ```
    25,ptc,randOMusername1,P4ssw0rd!
    25,ptc,randOMusername2,P4ssw0rd!
    30,ptc,randOMusername1,P4ssw0rd!
+   ```
+   The config item or parameter to use this separate account file is:
+   ```
+   --high-lvl-accounts high-level.csv
    ```
 2. Create files for your IV and CP encounter whitelists and add the Pokémon IDs which you want to encounter, one per line.
    iv-whitelist.txt:
