@@ -1951,7 +1951,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
 
                     # If no 25s are available, fall back to a L30.
                     if not hlvl_account:
-                        hlvl_account = account_sets.next('25', step_location)
+                        hlvl_account = account_sets.next('30', step_location)
 
                 # If we didn't get an account, it means we can't encounter.
                 if hlvl_account:
