@@ -24,7 +24,7 @@ Steps for using the new encounter system:
    66
    89
    ```
-3. Enabled the whitelist files in your config or cli parameters (check commandline.md for usage):
+3. Enable the whitelist files in your config or cli parameters (check commandline.md for usage):
    ```
    --iv-whitelist-file iv-whitelist.txt --cp-whitelist-file cp-whitelist.txt
    ```
