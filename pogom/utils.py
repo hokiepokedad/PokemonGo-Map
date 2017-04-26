@@ -662,6 +662,7 @@ def get_args():
                     password = line[3].strip()
 
                     hlvl_account = {
+                        'type': set_type,
                         'auth_service': service,
                         'username': username,
                         'password': password,

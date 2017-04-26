@@ -423,7 +423,7 @@ function pokemonLabel(item) {
     var height = item['height']
     var gender = item['gender']
     var form = item['form']
-    var cp = item['cp']
+    var cp = parseInt(item['cp']) || 0
 
     $.each(types, function (index, type) {
         typesDisplay += getTypeSpan(type)
@@ -436,9 +436,17 @@ function pokemonLabel(item) {
             <div>
                 IV: ${iv.toFixed(1)}% (${atk}/${def}/${sta})
             </div>
+            `
+
+        if (cp !== null && cp > 0) {
+            details += `
             <div>
                 CP: ${cp}
             </div>
+            `
+        }
+
+        details += `
             <div>
                 Moves: ${pMove1} / ${pMove2}
             </div>

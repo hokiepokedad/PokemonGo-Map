@@ -1789,6 +1789,8 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     # Get the level for the pokestop spin, and to send to webhook.
     level = get_player_level(map_dict)
+    # Use separate level indicator for our L25/L30 encounters.
+    encounter_level = level
 
     # Helping out the GC.
     if 'GET_INVENTORY' in map_dict['responses']:
@@ -1953,6 +1955,9 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
 
                 # If we didn't get an account, it means we can't encounter.
                 if hlvl_account:
+                    # Update level indicator.
+                    encounter_level = int(hlvl_account['type'])
+
                     # Make new API for this account.
                     # TODO: Optionally store the api object in the account
                     # itself so it can be re-used later on. However, this
@@ -2039,11 +2044,15 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                         'individual_stamina', 0),
                     'move_1': pokemon_info['move_1'],
                     'move_2': pokemon_info['move_2'],
-                    'cp': pokemon_info.get('cp', 0),
                     'height': pokemon_info['height_m'],
                     'weight': pokemon_info['weight_kg'],
                     'gender': pokemon_info['pokemon_display']['gender']
                 })
+
+                # Only add CP if we're level 30+.
+                if encounter_level >= 30:
+                    pokemon[p['encounter_id']][
+                        'cp'] = pokemon_info.get('cp', 0)
 
                 # Check for Unown's alphabetic character.
                 if pokemon_info['pokemon_id'] == 201:
@@ -2065,7 +2074,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                         'seconds_until_despawn': seconds_until_despawn,
                         'spawn_start': start_end[0],
                         'spawn_end': start_end[1],
-                        'player_level': level
+                        'player_level': encounter_level
                     })
                     wh_update_queue.put(('pokemon', wh_poke))
 
