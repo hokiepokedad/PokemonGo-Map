@@ -2820,7 +2820,7 @@ def database_migrate(db, old_ver):
     if old_ver < 18:
         migrate(
             migrator.add_column('pokemon', 'cp',
-                                SmallIntegerField(null=True, default=0))
+                                SmallIntegerField(null=True))
         )
 
     # Always log that we're done.
