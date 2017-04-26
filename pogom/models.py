@@ -1955,9 +1955,6 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
 
                 # If we didn't get an account, it means we can't encounter.
                 if hlvl_account:
-                    # Update level indicator.
-                    encounter_level = int(hlvl_account['type'])
-
                     # Make new API for this account.
                     # TODO: Optionally store the api object in the account
                     # itself so it can be re-used later on. However, this
@@ -1996,18 +1993,33 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                     req.download_settings()
                     req.get_buddy_walked()
                     encounter_result = req.call()
+
+                    # Update level indicator before we clear the response.
+                    encounter_level = get_player_level(encounter_result)
+
+                    # User error?
+                    if encounter_level < 25:
+                        raise Exception('Expected account of level 25 or'
+                                        + ' higher, but account '
+                                        + hlvl_account['username']
+                                        + ' is only level '
+                                        + encounter_level + '.')
+
+                    # Clear the response for memory management.
                     encounter_result = clear_dict_response(encounter_result)
 
+                    # Readability.
                     responses = encounter_result['responses']
+
                     # Check for captcha
                     captcha_url = responses['CHECK_CHALLENGE']['challenge_url']
                     # Throw warning but finish parsing
                     if len(captcha_url) > 1:
                         # Flag account.
                         hlvl_account['captcha'] = True
-                        log.info('High level account '
-                                 + hlvl_account['username']
-                                 + ' encountered a captcha.')
+                        log.info('Level %s account %s encountered a captcha.',
+                                 encounter_level,
+                                 hlvl_account['username'])
                 else:
                     log.error('No L25 or L30 accounts are available, please'
                               + ' consider adding more. Skipping encounter.')
@@ -2052,7 +2064,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                 # Only add CP if we're level 30+.
                 if encounter_level >= 30:
                     pokemon[p['encounter_id']][
-                        'cp'] = pokemon_info.get('cp', 0)
+                        'cp'] = pokemon_info.get('cp', None)
 
                 # Check for Unown's alphabetic character.
                 if pokemon_info['pokemon_id'] == 201:
@@ -2820,7 +2832,7 @@ def database_migrate(db, old_ver):
     if old_ver < 18:
         migrate(
             migrator.add_column('pokemon', 'cp',
-                                SmallIntegerField(null=True))
+                                SmallIntegerField(null=True, default=0))
         )
 
     # Always log that we're done.

@@ -423,7 +423,7 @@ function pokemonLabel(item) {
     var height = item['height']
     var gender = item['gender']
     var form = item['form']
-    var cp = parseInt(item['cp']) || 0
+    var cp = item['cp']
 
     $.each(types, function (index, type) {
         typesDisplay += getTypeSpan(type)
@@ -438,7 +438,7 @@ function pokemonLabel(item) {
             </div>
             `
 
-        if (cp !== null && cp > 0) {
+        if (cp !== null) {
             details += `
             <div>
                 CP: ${cp}
