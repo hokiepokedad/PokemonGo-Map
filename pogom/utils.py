@@ -647,6 +647,10 @@ def get_args():
             # Context processor.
             with open(args.high_lvl_accounts, 'r') as accs:
                 for line in accs:
+                    # Make sure it's not an empty line.
+                    if not line.strip():
+                        continue
+
                     line = line.split(',')
 
                     # We need "25 or 30, service, user, pass".
