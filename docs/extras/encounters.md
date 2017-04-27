@@ -6,7 +6,7 @@ Steps for using the new encounter system:
 
 1. Make sure initial scan has finished. Enabling encounters during initial scan is a waste of requests.
 2. Enable encounters on your map (`-enc`).
-3. Add L25 (and optionally L30) accounts for IV scanning into a CSV file (separate from your regular accounts file, e.g. 'high-level.csv'). The lines should be formatted as "25 or 30,service,user,pass":
+3. Add L25 (and optionally L30) accounts for IV scanning into a CSV file (separate from your regular accounts file, e.g. 'high-level.csv'). **Warning: read the important points below if you're scanning with only L30s!** The lines should be formatted as "25 or 30,service,user,pass":
    ```
    25,ptc,randOMusername1,P4ssw0rd!
    25,ptc,randOMusername2,P4ssw0rd!
@@ -43,6 +43,7 @@ L25/L30 accounts are not being recycled and are not in the usual account flow. T
 
 Some important notes:
 
+ * If you're only scanning with high level accounts (i.e. your regular accounts file only has L30s), the `--high-lvl-accounts` file can stay empty. The encounter code will use your regular accounts to encounter Pokémon if they're high enough level. But don't mix low level accounts with high levels, otherwise encounters will be skipped.
  * To report Unown form, Unown's Pokémon ID must be added to the IV or CP whitelist.
  * The old encounter whitelists/blacklists have been removed entirely.
  * Both the IV and CP whitelists are optional.
