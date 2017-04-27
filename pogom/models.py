@@ -1943,27 +1943,39 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                                    pokemon_id in args.cp_whitelist):
                 time.sleep(args.encounter_delay)
 
+                hlvl_account = None
+                hlvl_api = None
+                using_accountset = False
+
                 # If the host has L30s in the regular account pool, we
                 # can just use the current account.
                 if level >= 30:
                     hlvl_account = account
-
-                # Get account to use for IV or CP scanning.
-                if pokemon_id in args.cp_whitelist:
-                    hlvl_account = account_sets.next('30', step_location)
-                elif pokemon_id in args.iv_whitelist:
-                    # Or if the host has L25s in the regular pool, we can use
-                    # them here.
-                    if level >= 25:
-                        hlvl_account = account
-                    else:
-                        hlvl_account = account_sets.next('25', step_location)
-
-                    # If no 25s are available, fall back to a L30.
-                    if not hlvl_account:
+                    hlvl_api = api
+                else:
+                    # Get account to use for IV or CP scanning.
+                    if pokemon_id in args.cp_whitelist:
                         hlvl_account = account_sets.next('30', step_location)
+                    elif pokemon_id in args.iv_whitelist:
+                        # Or if the host has L25s in the regular pool, we can
+                        # use them here.
+                        if level >= 25:
+                            hlvl_account = account
+                            hlvl_api = api
+                        else:
+                            hlvl_account = account_sets.next(
+                                '25', step_location)
 
-                # If we didn't get an account, it means we can't encounter.
+                        # If no 25s are available, fall back to a L30.
+                        if not hlvl_account:
+                            hlvl_account = account_sets.next(
+                                '30', step_location)
+
+                # If we don't have an API object yet, it means we didn't re-use
+                # an old one, so we're using AccountSet.
+                using_accountset = not hlvl_api
+
+                # If we didn't get an account, we can't encounter.
                 if hlvl_account:
                     # Logging.
                     log.debug('Encountering Pokémon ID %s with account %s'
@@ -1973,25 +1985,32 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                               step_location[0],
                               step_location[1])
 
-                    # Make new API for this account.
-                    # TODO: Optionally store the api object in the account
-                    # itself so it can be re-used later on. However, this
-                    # can take up a considerable amount of memory depending
-                    # on the number of accounts.
-                    hlvl_api = setup_api(args, status)
+                    # If not args.no_api_store is enabled, we need to
+                    # re-use an old API object if it's stored and we're
+                    # using an account from the AccountSet.
+                    if not args.no_api_store and using_accountset:
+                        hlvl_api = hlvl_account.get('api', None)
+
+                    # Make new API for this account if we're not using an
+                    # API that's already logged in.
+                    if not hlvl_api:
+                        hlvl_api = setup_api(args, status)
+
+                        # Hashing key.
+                        # TODO: all of this should be handled properly... all
+                        # these useless, inefficient threads passing around all
+                        # these single-use variables are making me ill.
+                        if args.hash_key:
+                            key = key_scheduler.next()
+                            log.debug('Using key %s for this encounter.', key)
+                            hlvl_api.activate_hash_server(key)
+
+                    # We have an API object now. If necessary, store it.
+                    if using_accountset and not args.no_api_store:
+                        hlvl_account['api'] = hlvl_api
 
                     # Set location.
                     hlvl_api.set_position(*step_location)
-
-                    # Hashing key.
-                    # TODO: all of this should be handled properly... all
-                    # these useless, inefficient threads passing around all
-                    # these single-use variables are making me ill.
-                    if args.hash_key:
-                        key = key_scheduler.next()
-                        log.debug(
-                            'Using key {} for this encounter.'.format(key))
-                        hlvl_api.activate_hash_server(key)
 
                     # Log in.
                     check_login(args, hlvl_account, hlvl_api, step_location,
@@ -2035,6 +2054,11 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                                             + hlvl_account['username']
                                             + ' is only level '
                                             + encounter_level + '.')
+
+                    # We're done with the encounter. If it's from an
+                    # AccountSet, release account back to the pool.
+                    if using_accountset:
+                        account_sets.release(hlvl_account)
 
                     # Clear the response for memory management.
                     encounter_result = clear_dict_response(encounter_result)

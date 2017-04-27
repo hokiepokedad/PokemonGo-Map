@@ -11,6 +11,7 @@
                     [-mcr MANUAL_CAPTCHA_REFRESH]
                     [-mct MANUAL_CAPTCHA_TIMEOUT] [-ed ENCOUNTER_DELAY]
                     [-ivwf IV_WHITELIST_FILE] [-cpwf CP_WHITELIST_FILE]
+                    [-nostore]
                     [-wwht WEBHOOK_WHITELIST | -wblk WEBHOOK_BLACKLIST | -wwhtf WEBHOOK_WHITELIST_FILE | -wblkf WEBHOOK_BLACKLIST_FILE]
                     [-ld LOGIN_DELAY] [-lr LOGIN_RETRIES] [-mf MAX_FAILURES]
                     [-me MAX_EMPTY] [-bsr BAD_SCAN_RETRY]
@@ -41,8 +42,7 @@
                     [-tp TRUSTED_PROXIES] [-v [filename.log] | -vv
                     [filename.log]]
 
-    Args that start with '--' (eg. -a) can also be set in a config file or
-    specified via -cf).
+    Args that start with '--' (eg. -a) can also be set in a config file.
     The recognized syntax for setting (key, value) pairs is based on the INI and
     YAML formats (e.g. key=value or foo=TRUE). For full documentation of the
     differences from the standards please refer to the ConfigArgParse
@@ -148,6 +148,11 @@
     -cpwf CP_WHITELIST_FILE, --cp-whitelist-file CP_WHITELIST_FILE
                         File containing a list of Pokemon IDs to encounter for
                         CP scanning. [env var: POGOMAP_CP_WHITELIST_FILE]
+    -nostore, --no-api-store
+                        Don't store the API objects used by the high level
+                        accounts in memory. This will increase the number of
+                        logins per account, but decreases memory usage. [env
+                        var: POGOMAP_NO_API_STORE]
     -wwht WEBHOOK_WHITELIST, --webhook-whitelist WEBHOOK_WHITELIST
                         List of Pokemon to send to webhooks. Specified as
                         Pokemon ID. [env var: POGOMAP_WEBHOOK_WHITELIST]

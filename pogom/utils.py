@@ -168,6 +168,12 @@ def get_args():
                         default='', help='File containing a list of '
                         'Pokemon IDs to encounter for'
                         ' CP scanning.')
+    parser.add_argument('-nostore', '--no-api-store',
+                        help=("Don't store the API objects used by the high"
+                              + ' level accounts in memory. This will increase'
+                              + ' the number of logins per account, but '
+                              + ' decreases memory usage.'),
+                        action='store_true', default=False)
     webhook_list = parser.add_mutually_exclusive_group()
     webhook_list.add_argument('-wwht', '--webhook-whitelist',
                               action='append', default=[],
