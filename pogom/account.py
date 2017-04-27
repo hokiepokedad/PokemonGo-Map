@@ -389,7 +389,7 @@ class AccountSet(object):
                 last_scanned = account.get('last_scanned', False)
 
                 if last_scanned:
-                    seconds_passed = last_scanned - now
+                    seconds_passed = now - last_scanned
                     old_coords = account.get('last_coords', coords_to_scan)
 
                     distance_km = equi_rect_distance(

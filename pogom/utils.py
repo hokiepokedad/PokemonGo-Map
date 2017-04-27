@@ -691,12 +691,12 @@ def get_args():
         # IV scanning.
         if args.iv_whitelist_file:
             with open(args.iv_whitelist_file) as f:
-                args.iv_whitelist = [int(l.strip()) for l in f]
+                args.iv_whitelist = frozenset([int(l.strip()) for l in f])
 
         # CP scanning.
         if args.cp_whitelist_file:
             with open(args.cp_whitelist_file) as f:
-                args.cp_whitelist = [int(l.strip()) for l in f]
+                args.cp_whitelist = frozenset([int(l.strip()) for l in f])
 
         # Make max workers equal number of accounts if unspecified, and disable
         # account switching.

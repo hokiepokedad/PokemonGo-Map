@@ -1943,11 +1943,21 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                                    pokemon_id in args.cp_whitelist):
                 time.sleep(args.encounter_delay)
 
+                # If the host has L30s in the regular account pool, we
+                # can just use the current account.
+                if level >= 30:
+                    hlvl_account = account
+
                 # Get account to use for IV or CP scanning.
                 if pokemon_id in args.cp_whitelist:
                     hlvl_account = account_sets.next('30', step_location)
                 elif pokemon_id in args.iv_whitelist:
-                    hlvl_account = account_sets.next('25', step_location)
+                    # Or if the host has L25s in the regular pool, we can use
+                    # them here.
+                    if level >= 25:
+                        hlvl_account = account
+                    else:
+                        hlvl_account = account_sets.next('25', step_location)
 
                     # If no 25s are available, fall back to a L30.
                     if not hlvl_account:
@@ -1955,6 +1965,14 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
 
                 # If we didn't get an account, it means we can't encounter.
                 if hlvl_account:
+                    # Logging.
+                    log.debug('Encountering Pokémon ID %s with account %s'
+                              + ' at %s, %s.',
+                              pokemon_id,
+                              hlvl_account['username'],
+                              step_location[0],
+                              step_location[1])
+
                     # Make new API for this account.
                     # TODO: Optionally store the api object in the account
                     # itself so it can be re-used later on. However, this
@@ -1981,7 +1999,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
 
                     # Setup encounter request envelope.
                     req = hlvl_api.create_request()
-                    encounter_result = req.encounter(
+                    req.encounter(
                         encounter_id=p['encounter_id'],
                         spawn_point_id=p['spawn_point_id'],
                         player_latitude=step_location[0],
@@ -1993,20 +2011,6 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                     req.download_settings()
                     req.get_buddy_walked()
                     encounter_result = req.call()
-
-                    # Update level indicator before we clear the response.
-                    encounter_level = get_player_level(encounter_result)
-
-                    # User error?
-                    if encounter_level < 25:
-                        raise Exception('Expected account of level 25 or'
-                                        + ' higher, but account '
-                                        + hlvl_account['username']
-                                        + ' is only level '
-                                        + encounter_level + '.')
-
-                    # Clear the response for memory management.
-                    encounter_result = clear_dict_response(encounter_result)
 
                     # Readability.
                     responses = encounter_result['responses']
@@ -2020,6 +2024,20 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                         log.info('Level %s account %s encountered a captcha.',
                                  encounter_level,
                                  hlvl_account['username'])
+                    else:
+                        # Update level indicator before we clear the response.
+                        encounter_level = get_player_level(encounter_result)
+
+                        # User error?
+                        if encounter_level < 25:
+                            raise Exception('Expected account of level 25 or'
+                                            + ' higher, but account '
+                                            + hlvl_account['username']
+                                            + ' is only level '
+                                            + encounter_level + '.')
+
+                    # Clear the response for memory management.
+                    encounter_result = clear_dict_response(encounter_result)
                 else:
                     log.error('No L25 or L30 accounts are available, please'
                               + ' consider adding more. Skipping encounter.')
