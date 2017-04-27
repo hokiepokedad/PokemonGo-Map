@@ -4,8 +4,9 @@ Since the IV update of April 21st which makes IVs the same for players of level 
 
 Steps for using the new encounter system:
 
-1. Enabled encounters on your map (`-enc`).
-2. Add L25 (and optionally L30) accounts for IV scanning into a CSV file (separate from your regular accounts file, e.g. 'high-level.csv'). The lines should be formatted as "25 or 30,service,user,pass":
+1. Make sure initial scan has finished. Enabling encounters during initial scan is a waste of requests.
+2. Enable encounters on your map (`-enc`).
+3. Add L25 (and optionally L30) accounts for IV scanning into a CSV file (separate from your regular accounts file, e.g. 'high-level.csv'). **Warning: read the important points below if you're scanning with only L30s!** The lines should be formatted as "25 or 30,service,user,pass":
    ```
    25,ptc,randOMusername1,P4ssw0rd!
    25,ptc,randOMusername2,P4ssw0rd!
@@ -15,7 +16,7 @@ Steps for using the new encounter system:
    ```
    --high-lvl-accounts high-level.csv
    ```
-3. Create files for your IV and CP encounter whitelists and add the Pokémon IDs which you want to encounter, one per line.
+4. Create files for your IV and CP encounter whitelists and add the Pokémon IDs which you want to encounter, one per line.
    iv-whitelist.txt:
    ```
    10
@@ -29,11 +30,11 @@ Steps for using the new encounter system:
    66
    89
    ```
-4. Enable the whitelist files in your config or cli parameters (check commandline.md for usage):
+5. Enable the whitelist files in your config or cli parameters (check commandline.md for usage):
    ```
    --iv-whitelist-file iv-whitelist.txt --cp-whitelist-file cp-whitelist.txt
    ```
-5. Optionally set a speed limit for your high level accounts. This is separate from the usual speed limit, to allow a lower speed to keep high level accounts safer:
+6. Optionally set a speed limit for your high level accounts. This is separate from the usual speed limit, to allow a lower speed to keep high level accounts safer:
    ```
    --hlvl-kph 25
    ```
@@ -42,6 +43,8 @@ L25/L30 accounts are not being recycled and are not in the usual account flow. T
 
 Some important notes:
 
+ * If you're only scanning with high level accounts (i.e. your regular accounts file only has L30s), the `--high-lvl-accounts` file can stay empty. The encounter code will use your regular accounts to encounter Pokémon if they're high enough level. But don't mix low level accounts with high levels, otherwise encounters will be skipped.
+ * To report Unown form, Unown's Pokémon ID must be added to the IV or CP whitelist.
  * The old encounter whitelists/blacklists have been removed entirely.
  * Both the IV and CP whitelists are optional.
  * When no L25 accounts are available but IV encounters are enabled, it will try to get a L30 account instead for the encounter.
