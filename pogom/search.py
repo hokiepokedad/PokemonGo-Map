@@ -365,14 +365,12 @@ def search_overseer_thread(args, new_location_queue, pause_bit, heartb,
         account_queue.put(account)
 
     '''
-    Create sets of special case accounts. Currently limited to L25+ IV and
-    L30+ CP scanning.
+    Create sets of special case accounts.
+    Currently limited to L30+ IV/CP scanning.
     '''
-    account_sets.create_set('25', args.accounts_L25)
     account_sets.create_set('30', args.accounts_L30)
 
     # Debug.
-    log.info('Added %s accounts to the L25 pool.', args.accounts_L25)
     log.info('Added %s accounts to the L30 pool.', args.accounts_L30)
 
     # Create a list for failed accounts.

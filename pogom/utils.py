@@ -89,7 +89,7 @@ def get_args():
     parser.add_argument('-hlvl', '--high-lvl-accounts',
                         help=('Load high level accounts from CSV file '
                               + ' containing '
-                              + '"25 or 30,auth_service,username,passwd"'
+                              + '"auth_service,username,passwd"'
                               + ' lines.'))
     parser.add_argument('-bh', '--beehive',
                         help=('Use beehive configuration for multiple ' +
@@ -160,14 +160,10 @@ def get_args():
                         help=('Time delay between encounter pokemon ' +
                               'in scan threads.'),
                         type=float, default=1)
-    parser.add_argument('-ivwf', '--iv-whitelist-file',
+    parser.add_argument('-encwf', '--enc-whitelist-file',
                         default='', help='File containing a list of '
                         'Pokemon IDs to encounter for'
-                        ' IV scanning.')
-    parser.add_argument('-cpwf', '--cp-whitelist-file',
-                        default='', help='File containing a list of '
-                        'Pokemon IDs to encounter for'
-                        ' CP scanning.')
+                        ' IV/CP scanning.')
     parser.add_argument('-nostore', '--no-api-store',
                         help=("Don't store the API objects used by the high"
                               + ' level accounts in memory. This will increase'
@@ -304,7 +300,7 @@ def get_args():
                         type=int, default=35)
     parser.add_argument('-hkph', '--hlvl-kph',
                         help=('Set a maximum speed in km/hour for scanner ' +
-                              'movement, for high-level (L25/L30) accounts.'),
+                              'movement, for high-level (L30) accounts.'),
                         type=int, default=25)
     parser.add_argument('-ldur', '--lure-duration',
                         help=('Change duration for lures set on pokestops. ' +
@@ -645,8 +641,7 @@ def get_args():
                                   'password': args.password[i],
                                   'auth_service': args.auth_service[i]})
 
-        # Prepare the L25/L30 accounts for the account sets.
-        args.accounts_L25 = []
+        # Prepare the L30 accounts for the account sets.
         args.accounts_L30 = []
 
         if args.high_lvl_accounts:
@@ -659,50 +654,33 @@ def get_args():
 
                     line = line.split(',')
 
-                    # We need "25 or 30, service, user, pass".
-                    if len(line) < 4:
-                        raise Exception('L25/L30 account is missing a'
+                    # We need "service, user, pass".
+                    if len(line) < 3:
+                        raise Exception('L30 account is missing a'
                                         + ' field. Each line requires: '
-                                        + '"25 or 30,service,user,pass".')
+                                        + '"service,user,pass".')
 
                     # Let's remove trailing whitespace.
-                    set_type = line[0].strip()
-                    service = line[1].strip()
-                    username = line[2].strip()
-                    password = line[3].strip()
+                    service = line[0].strip()
+                    username = line[1].strip()
+                    password = line[2].strip()
 
                     hlvl_account = {
-                        'type': set_type,
                         'auth_service': service,
                         'username': username,
                         'password': password,
                         'captcha': False
                     }
 
-                    if set_type == '25':
-                        args.accounts_L25.append(hlvl_account)
-                    elif set_type == '30':
-                        args.accounts_L30.append(hlvl_account)
-                    else:
-                        raise Exception('Tried adding high level account '
-                                        + username
-                                        + ' to set of unknown type: "'
-                                        + set_type
-                                        + '". Type must be 25 or 30.')
+                    args.accounts_L30.append(hlvl_account)
 
         # Prepare the IV/CP scanning filters.
-        args.iv_whitelist = []
-        args.cp_whitelist = []
+        args.enc_whitelist = []
 
-        # IV scanning.
-        if args.iv_whitelist_file:
-            with open(args.iv_whitelist_file) as f:
-                args.iv_whitelist = frozenset([int(l.strip()) for l in f])
-
-        # CP scanning.
-        if args.cp_whitelist_file:
-            with open(args.cp_whitelist_file) as f:
-                args.cp_whitelist = frozenset([int(l.strip()) for l in f])
+        # IV/CP scanning.
+        if args.enc_whitelist_file:
+            with open(args.enc_whitelist_file) as f:
+                args.enc_whitelist = frozenset([int(l.strip()) for l in f])
 
         # Make max workers equal number of accounts if unspecified, and disable
         # account switching.

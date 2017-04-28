@@ -10,7 +10,7 @@
                     [-cds CAPTCHA_DSK] [-mcd MANUAL_CAPTCHA_DOMAIN]
                     [-mcr MANUAL_CAPTCHA_REFRESH]
                     [-mct MANUAL_CAPTCHA_TIMEOUT] [-ed ENCOUNTER_DELAY]
-                    [-ivwf IV_WHITELIST_FILE] [-cpwf CP_WHITELIST_FILE]
+                    [-encwf ENC_WHITELIST_FILE]
                     [-nostore]
                     [-wwht WEBHOOK_WHITELIST | -wblk WEBHOOK_BLACKLIST | -wwhtf WEBHOOK_WHITELIST_FILE | -wblkf WEBHOOK_BLACKLIST_FILE]
                     [-ld LOGIN_DELAY] [-lr LOGIN_RETRIES] [-mf MAX_FAILURES]
@@ -142,12 +142,9 @@
     -ed ENCOUNTER_DELAY, --encounter-delay ENCOUNTER_DELAY
                         Time delay between encounter pokemon in scan threads.
                         [env var: POGOMAP_ENCOUNTER_DELAY]
-    -ivwf IV_WHITELIST_FILE, --iv-whitelist-file IV_WHITELIST_FILE
+    -encwf ENC_WHITELIST_FILE, --enc-whitelist-file ENC_WHITELIST_FILE
                         File containing a list of Pokemon IDs to encounter for
-                        IV scanning. [env var: POGOMAP_IV_WHITELIST_FILE]
-    -cpwf CP_WHITELIST_FILE, --cp-whitelist-file CP_WHITELIST_FILE
-                        File containing a list of Pokemon IDs to encounter for
-                        CP scanning. [env var: POGOMAP_CP_WHITELIST_FILE]
+                        IV/CP scanning. [env var: POGOMAP_IV_WHITELIST_FILE]
     -nostore, --no-api-store
                         Don't store the API objects used by the high level
                         accounts in memory. This will increase the number of

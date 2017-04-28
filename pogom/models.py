@@ -1939,8 +1939,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
             pokemon_id = p['pokemon_data']['pokemon_id']
             encounter_result = None
 
-            if args.encounter and (pokemon_id in args.iv_whitelist or
-                                   pokemon_id in args.cp_whitelist):
+            if args.encounter and (pokemon_id in args.enc_whitelist):
                 time.sleep(args.encounter_delay)
 
                 hlvl_account = None
@@ -1954,22 +1953,8 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                     hlvl_api = api
                 else:
                     # Get account to use for IV or CP scanning.
-                    if pokemon_id in args.cp_whitelist:
+                    if pokemon_id in args.enc_whitelist:
                         hlvl_account = account_sets.next('30', step_location)
-                    elif pokemon_id in args.iv_whitelist:
-                        # Or if the host has L25s in the regular pool, we can
-                        # use them here.
-                        if level >= 25:
-                            hlvl_account = account
-                            hlvl_api = api
-                        else:
-                            hlvl_account = account_sets.next(
-                                '25', step_location)
-
-                        # If no 25s are available, fall back to a L30.
-                        if not hlvl_account:
-                            hlvl_account = account_sets.next(
-                                '30', step_location)
 
                 # If we don't have an API object yet, it means we didn't re-use
                 # an old one, so we're using AccountSet.
@@ -2048,8 +2033,8 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                         encounter_level = get_player_level(encounter_result)
 
                         # User error?
-                        if encounter_level < 25:
-                            raise Exception('Expected account of level 25 or'
+                        if encounter_level < 30:
+                            raise Exception('Expected account of level 30 or'
                                             + ' higher, but account '
                                             + hlvl_account['username']
                                             + ' is only level '
@@ -2063,7 +2048,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                     # Clear the response for memory management.
                     encounter_result = clear_dict_response(encounter_result)
                 else:
-                    log.error('No L25 or L30 accounts are available, please'
+                    log.error('No L30 accounts are available, please'
                               + ' consider adding more. Skipping encounter.')
 
             pokemon[p['encounter_id']] = {
