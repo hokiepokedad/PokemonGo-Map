@@ -1,6 +1,6 @@
 # Pokémon Encounters
 
-Since the IV update of April 21st which makes IVs the same for players of level 25 and above, the encounter system has been reworked and now includes CP/IV scanning.
+Since the IV update of April 21st 2017 which makes IVs the same for players of level 25 and above, the encounter system has been reworked and now includes CP/IV scanning.
 
 Steps for using the new encounter system:
 
@@ -34,9 +34,13 @@ Steps for using the new encounter system:
    ```
    --iv-whitelist-file iv-whitelist.txt --cp-whitelist-file cp-whitelist.txt
    ```
-6. Optionally set a speed limit for your high level accounts. This is separate from the usual speed limit, to allow a lower speed to keep high level accounts safer:
+6. (Optional) Set a speed limit for your high level accounts. This is separate from the usual speed limit, to allow a lower speed to keep high level accounts safer:
    ```
    --hlvl-kph 25
+   ```
+7. (Optional) To reduce the number of times a high level account will log into the game via the API, the API objects are stored in memory to re-use them rather than recreating them. This is enabled by default to keep high level accounts *safer* but it will cause an increase in memory usage. To reduce memory usage, disable the feature with:
+   ```
+   --no-api-store
    ```
 
 L25/L30 accounts are not being recycled and are not in the usual account flow. This is intentional, to allow for future reworks to handle accounts properly. This also keeps interaction with high level accounts to a minimum. We can consider handling them more automatically when the account handlers are properly fully implemented.
