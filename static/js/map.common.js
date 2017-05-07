@@ -851,7 +851,7 @@ var StoreOptions = {
         type: StoreTypes.String
     },
     'remember_select_exclude': {
-        default: [10,11,13,14,16,17,19,20,21,22,23,29,30,32,33,41,42,43,46,48,49,52,54,55,56,60,61,69,72,73,74,79,96,98,99,100,109,116,118,120,129,133,161,167,177,198],
+        default: [10,11,13,14,16,17,19,20,21,22,23,29,30,32,33,41,42,43,46,48,49,52,54,55,56,60,61,69,72,73,74,79,96,98,99,100,109,116,118,120,129,133,161,167,177,198,1,191,102,187,163,165,193,194,152,158,183,188,127,216,223],
         type: StoreTypes.JSON
     },
     'remember_select_notify': {
@@ -859,7 +859,7 @@ var StoreOptions = {
         type: StoreTypes.JSON
     },
     'remember_select_rarity_notify': {
-        default: [], // Common, Uncommon, Rare, Very Rare, Ultra Rare
+        default: ['Ultra Rare'], // Common, Uncommon, Rare, Very Rare, Ultra Rare
         type: StoreTypes.JSON
     },
     'remember_text_perfection_notify': {
