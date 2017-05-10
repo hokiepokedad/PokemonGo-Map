@@ -1517,7 +1517,11 @@ function updateMap() {
                 return this.indexOf(e) < 0
             }, reincludedPokemon)
         }
-        timestamp = result.timestamp
+		
+		if (result.pokemons.length > 0) {
+			timestamp = result.timestamp
+		}
+		
         lastUpdateTime = Date.now()
     })
 }
