@@ -1478,6 +1478,10 @@ function updateSpawnPoints() {
 
 function updateMap() {
     loadRawData().done(function (result) {
+		if (result.pokemons.length > 0) {
+			timestamp = result.timestamp
+		}
+		
         $.each(result.pokemons, processPokemons)
         $.each(result.pokestops, processPokestops)
         $.each(result.gyms, processGyms)
@@ -1517,10 +1521,6 @@ function updateMap() {
                 return this.indexOf(e) < 0
             }, reincludedPokemon)
         }
-		
-		if (result.pokemons.length > 0) {
-			timestamp = result.timestamp
-		}
 		
         lastUpdateTime = Date.now()
     })
