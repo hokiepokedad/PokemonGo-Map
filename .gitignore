@@ -15,6 +15,7 @@ src/
 _build
 _build_html
 beehive.*
+static/pixel_icons/*.png
 *.csv
 *.bat
 *.sh
