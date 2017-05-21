@@ -1478,7 +1478,7 @@ function updateSpawnPoints() {
 
 function updateMap() {
     loadRawData().done(function (result) {
-		if (result.pokemons.length > 0) {
+		if (!results.pokemons || result.pokemons.length > 0) {
 			timestamp = result.timestamp
 		}
 		
